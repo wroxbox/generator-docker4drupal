@@ -1,0 +1,51 @@
+{
+  "name": "generator-docker4drupal",
+  "version": "0.0.0",
+  "description": "Provides a Drupal Docker local environment based on docker4drupal",
+  "homepage": "",
+  "author": {
+    "name": "Paulo Gomes",
+    "email": "pauloamgomes@gmail.com",
+    "url": ""
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/index.js",
+  "keywords": [
+    "drupal",
+    "docker",
+    "yeoman-generator"
+  ],
+  "devDependencies": {
+    "yeoman-test": "^1.6.0",
+    "yeoman-assert": "^3.0.0",
+    "nsp": "^2.6.3",
+    "eslint": "^4.1.0",
+    "eslint-config-xo-space": "^0.16.0",
+    "jest": "^19.0.2",
+    "jest-cli": "^20.0.0"
+  },
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "yeoman-generator": "^1.1.1",
+    "yosay": "^2.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "scripts": {
+    "prepublish": "nsp check",
+    "pretest": "eslint . --fix",
+    "test": "jest"
+  },
+  "eslintConfig": {
+    "extends": "xo-space",
+    "env": {
+      "jest": true,
+      "node": true
+    }
+  },
+  "repository": "pauloamgomes/generator-docker4drupal",
+  "license": "MIT"
+}

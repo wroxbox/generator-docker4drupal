@@ -1,0 +1,17 @@
+version: "2"
+
+syncs:
+  docker-sync-<%= instance %>:
+    src: '../docroot'
+    sync_userid: '82'
+    watch_excludes: ['.*/.git', '.*/node_modules', '.*/bower_components', '.*/sass-cache', '.*/.sass-cache', '.*/.sass-cache', '.coffee', '.scss', '.sass', '.gitignore']
+    sync_excludes: ['.gitignore', '.git/', '.idea/', '.DS_Store', 'node_modules/', 'bower_components/']
+  docker-sync-<%= instance %>-certs:
+    src: '../certs'
+    sync_strategy: 'unison'
+    sync_userid: '82'
+    sync_excludes: ['.DS_Store']
+#  docker-sync-another-project:
+#    src: '/absolute/path/to/project/codebase'
+#    sync_userid: '82'
+#    sync_excludes: ['.gitignore', '.git/', '.idea/']
