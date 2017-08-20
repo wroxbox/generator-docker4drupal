@@ -28,6 +28,26 @@ const nginxImages = {
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
+
+    this.log('                                             ');
+    this.log('                      `/.                    ');
+    this.log('                      /yys+-                 ');
+    this.log('                   `:syyyyyys/.              ');
+    this.log('                `:oyyyyyyyyyyyys/`           ');
+    this.log('              .+yyyyyyyyyyyyyyyyyy+.         ');
+    this.log('            `+yyyyyyyyyyyyyyyyyyyyyy/        ');
+    this.log('           `oyyyyyyyyyyyyyyyyyyyyyyyyo`      ');
+    this.log('           +yyyyyyyyyyyyyyyyyyyyyyyyyy+      ');
+    this.log('          .yyyyyyyyyyyyyyyyyyyyyyyyyyyy.     ');
+    this.log('          :yyyyyyyys+//+oyyyyyyyyysosyy:     ');
+    this.log('          -yyyyyys.       .+yyyo:`   .y-     ');
+    this.log('           syyyyy-          `/.       o      ');
+    this.log('           .yyyyy+        `:sy/      /.      ');
+    this.log('            .syyyys:...-/oyo/:ss/--/o.       ');
+    this.log('             `/yyyyyyyyy/osyyyosyyy/`        ');
+    this.log('               `:oyyyyyys/:://oyo:`          ');
+    this.log('                  `-:+oossoo+:-`             ');
+    this.log('                                             ');
     this.log(yosay(
       'Welcome to the ' + chalk.yellow('Docker4Drupal') + ' generator!'
     ));
