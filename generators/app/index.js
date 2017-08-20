@@ -12,42 +12,38 @@ const phpImages = {
     {value: 'wodby/drupal:7-7.1-2.4.3', name: 'Drupal 7 - PHP 7.1'},
     {value: 'wodby/drupal:7-7.0-2.4.3', name: 'Drupal 7 - PHP 7.0'},
     {value: 'wodby/drupal:7-5.6-2.4.3', name: 'Drupal 7 - PHP 5.6'},
-    {value: 'wodby/drupal:6-5.6-2.4.3', name: 'Drupal 6 - PHP 5.6'},
-    {value: 'wodby/drupal:6-5.3-2.4.3', name: 'Drupal 6 - PHP 5.3'}
   ],
   custom: [
     {value: 'wodby/drupal-php:7.1-2.4.2', name: 'PHP 7.1'},
     {value: 'wodby/drupal-php:7.0-2.4.2', name: 'PHP 7.0'},
     {value: 'wodby/drupal-php:5.6-2.4.2', name: 'PHP 5.6'},
-    {value: 'wodby/drupal-php:5.3-2.4.2', name: 'PHP 5.3'}
   ]
 };
 
 const nginxImages = {
   D8: 'wodby/drupal-nginx:8-1.13-2.4.0',
-  D7: 'wodby/drupal-nginx:7-1.13-2.4.0',
-  D6: 'wodby/drupal-nginx:6-1.13-2.4.0'
+  D7: 'wodby/drupal-nginx:7-1.13-2.4.0'
 };
 
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
     this.log(yosay(
-      'Welcome to the epic ' + chalk.red('generator-docker4drupal') + ' generator!'
+      'Welcome to the ' + chalk.yellow('Docker4Drupal') + ' generator!'
     ));
 
     const prompts = [{
       type: 'list',
       name: 'genType',
-      message: 'What kind of drupal docker you want?',
+      message: 'What kind of Drupal Docker you want?',
       choices: [
         {
           value: 'vanilla',
-          name: 'Use "vanilla" Drupal from docker4drupal'
+          name: 'Run Vanilla Drupal from Image'
         },
         {
           value: 'custom',
-          name: 'Use a "custom" Drupal docroot'
+          name: 'Mount my Drupal Codebase'
         }
       ]
     },
@@ -70,6 +66,18 @@ module.exports = class extends Generator {
       }
     },
     {
+      type: 'list',
+      name: 'drupalVersion',
+      message: 'Drupal Version',
+      choices: [
+        {value: "D8", name: "Drupal 8"},
+        {value: "D7", name: "Drupal 7"}
+      ],
+      when: function (answers) {
+        return answers.genType === 'custom';
+      }
+    },
+    {
       name: 'siteName',
       message: 'What is your drupal site name?',
       default: _.startCase(this.appname)
@@ -84,8 +92,10 @@ module.exports = class extends Generator {
     },
     {
       name: 'domain',
-      message: 'What is your drupal site domain? Ex: d8.docker.localhost',
-      default: 'drupal.docker.localhost'
+      message: 'What is your drupal site domain? Ex: drupal.docker.localhost',
+      default: function (answers) {
+        return `${answers.siteMachineName}.docker.localhost`
+      }
     }];
 
     return this.prompt(prompts).then(props => {
@@ -94,7 +104,13 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    const drupalVersion = 'D' + this.props.phpImage.match(/^wodby\/drupal:([6-8])-/)[1];
+    var drupalVersion = "D8"
+    if (this.props.genType == 'vanilla') {
+      drupalVersion = 'D' + this.props.phpImage.match(/^wodby\/drupal:([7-8])-/)[1];
+    } else {
+      drupalVersion = this.props.drupalVersion
+    }
+
     this.fs.copyTpl(
       this.templatePath('docker-compose.yml'),
       this.destinationPath('docker/docker-compose.yml'),
@@ -112,9 +128,15 @@ module.exports = class extends Generator {
         instance: this.props.siteMachineName
       }
     );
-    this.fs.copy(
-      this.templatePath('ddocker.sh'),
-      this.destinationPath('docker/ddocker.sh')
+    this.fs.copyTpl(
+      this.templatePath('docker4drupal.sh'),
+      this.destinationPath('docker4drupal.sh'),
+      {
+        instance: this.props.siteMachineName,
+        siteName: this.props.siteName,
+        domain: this.props.domain,
+        genType: this.props.genType
+      }
     );
     // Only for D8.
     if (drupalVersion === 'D8') {
