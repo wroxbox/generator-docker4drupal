@@ -1,6 +1,6 @@
 {
   "name": "generator-docker4drupal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Provides a Drupal Docker local environment based on docker4drupal",
   "homepage": "https://github.com/pauloamgomes/generator-docker4drupal",
   "author": {
