@@ -71,7 +71,7 @@ services:
       - 'traefik.frontend.rule=Host:<%= domain %>'
 
 #  apache:
-#    image: wodby/drupal-apache:2.4-1.0.0
+#    image: wodby/drupal-apache:2.4-1.0.2
 #    depends_on:
 #      - php
 #    environment:
@@ -80,9 +80,9 @@ services:
 #      APACHE_SERVER_ROOT: /var/www/html/web
 #    volumes:
 #      - codebase:/var/www/html
-# Options for macOS users (http://docs.docker4drupal.org/en/latest/macos)
-#      - docker-sync:/var/www/html # Docker-sync
-#      - codebase:/var/www/html:cached # User-guided caching
+## Options for macOS users (http://docs.docker4drupal.org/en/latest/macos)
+##      - codebase:/var/www/html:cached # User-guided caching
+##      - docker-sync:/var/www/html # Docker-sync
 #    labels:
 #      - 'traefik.backend=apache'
 #      - 'traefik.port=80'
@@ -102,12 +102,22 @@ services:
 #      - 'traefik.frontend.rule=Host:varnish.<%= domain %>'
 
 #  redis:
-#    image: wodby/redis:3.2-2.1.1
+#    image: wodby/redis:3.2-2.1.2
 
-  pma:
+#  adminer:
+#    image: wodby/adminer:4.3-1.1.0
+#    environment:
+#      ADMINER_SALT: adminer-salt
+#    labels:
+#      - 'traefik.backend=adminer'
+#      - 'traefik.port=9000'
+#      - 'traefik.frontend.rule=Host:adminer.<%= domain %>'
+
+
+  pma-<%= instance %>:
     image: phpmyadmin/phpmyadmin
     environment:
-      PMA_HOST: mariadb
+      PMA_HOST: mariadb-<%= instance %>
       PMA_USER: drupal
       PMA_PASSWORD: drupal
       PHP_UPLOAD_MAX_FILESIZE: 1G
@@ -119,10 +129,12 @@ services:
 
 #  solr:
 ## wodby/drupal-solr:[DRUPAL_VERSION]-[SOLR_VERSION]-[STABILITY_TAG].
-#    image: wodby/drupal-solr:8-6.4-2.1.0
-##    image: wodby/drupal-solr:8-6.3-2.1.0
-##    image: wodby/drupal-solr:8-5.5-2.1.0
-##    image: wodby/drupal-solr:7-5.4-2.1.0
+#    image: wodby/drupal-solr:8-6.6-2.2.0
+##    image: wodby/drupal-solr:8-6.5-2.2.0
+##    image: wodby/drupal-solr:8-6.4-2.2.0
+##    image: wodby/drupal-solr:8-6.3-2.2.0
+##    image: wodby/drupal-solr:8-5.5-2.2.0
+##    image: wodby/drupal-solr:7-5.4-2.2.0
 #    environment:
 #      SOLR_HEAP: 1024m
 #    labels:
@@ -144,7 +156,7 @@ services:
 #    labels:
 #      - 'traefik.backend=nodejs'
 #      - 'traefik.port=8080'
-#      - 'traefik.frontend.rule=Host:nodejs.drupal.docker.localhost'
+#      - 'traefik.frontend.rule=Host:nodejs.<%= domain %>'
 #    volumes:
 #      - ./path/to/your/single-page-app:/app
 #    command: sh -c 'npm install && npm run start'
@@ -155,7 +167,7 @@ services:
 #    labels:
 #      - 'traefik.backend=node'
 #      - 'traefik.port=3000'
-#      - 'traefik.frontend.rule=Host:front.drupal.docker.localhost'
+#      - 'traefik.frontend.rule=Host:front.<%= domain %>'
 #    expose:
 #      - "3000"
 #    volumes:
@@ -164,6 +176,19 @@ services:
 
 #  memcached:
 #    image: wodby/memcached:1.4-2.0.0
+
+#  rsyslog:
+#    image: wodby/rsyslog
+
+#  athenapdf:
+#    image: arachnysdocker/athenapdf-service
+#    environment:
+#      WEAVER_AUTH_KEY: weaver-auth-key
+#      WEAVER_ATHENA_CMD: "athenapdf -S"
+#      WEAVER_MAX_WORKERS: 10
+#      WEAVER_MAX_CONVERSION_QUEUE: 50
+#      WEAVER_WORKER_TIMEOUT: 90
+#      WEAVER_CONVERSION_FALLBACK: false
 
   traefik-<%= instance %>:
     image: traefik

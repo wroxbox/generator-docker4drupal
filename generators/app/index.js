@@ -7,22 +7,22 @@ var mkdirp = require('mkdirp');
 
 const phpImages = {
   vanilla: [
-    {value: 'wodby/drupal:8-7.1-2.4.3', name: 'Drupal 8 - PHP 7.1'},
-    {value: 'wodby/drupal:8-7.0-2.4.3', name: 'Drupal 8 - PHP 7.0'},
-    {value: 'wodby/drupal:7-7.1-2.4.3', name: 'Drupal 7 - PHP 7.1'},
-    {value: 'wodby/drupal:7-7.0-2.4.3', name: 'Drupal 7 - PHP 7.0'},
-    {value: 'wodby/drupal:7-5.6-2.4.3', name: 'Drupal 7 - PHP 5.6'},
+    {value: 'wodby/drupal:8-7.1-2.4.4', name: 'Drupal 8 - PHP 7.1'},
+    {value: 'wodby/drupal:8-7.0-2.4.4', name: 'Drupal 8 - PHP 7.0'},
+    {value: 'wodby/drupal:7-7.1-2.4.4', name: 'Drupal 7 - PHP 7.1'},
+    {value: 'wodby/drupal:7-7.0-2.4.4', name: 'Drupal 7 - PHP 7.0'},
+    {value: 'wodby/drupal:7-5.6-2.4.4', name: 'Drupal 7 - PHP 5.6'},
   ],
   custom: [
-    {value: 'wodby/drupal-php:7.1-2.4.2', name: 'PHP 7.1'},
-    {value: 'wodby/drupal-php:7.0-2.4.2', name: 'PHP 7.0'},
-    {value: 'wodby/drupal-php:5.6-2.4.2', name: 'PHP 5.6'},
+    {value: 'wodby/drupal-php:7.1-2.4.3', name: 'PHP 7.1'},
+    {value: 'wodby/drupal-php:7.0-2.4.3', name: 'PHP 7.0'},
+    {value: 'wodby/drupal-php:5.6-2.4.3', name: 'PHP 5.6'},
   ]
 };
 
 const nginxImages = {
-  D8: 'wodby/drupal-nginx:8-1.13-2.4.0',
-  D7: 'wodby/drupal-nginx:7-1.13-2.4.0'
+  D8: 'wodby/drupal-nginx:8-1.13-2.4.2',
+  D7: 'wodby/drupal-nginx:7-1.13-2.4.2'
 };
 
 module.exports = class extends Generator {
