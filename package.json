@@ -2,11 +2,11 @@
   "name": "generator-docker4drupal",
   "version": "1.0.0",
   "description": "Provides a Drupal Docker local environment based on docker4drupal",
-  "homepage": "",
+  "homepage": "https://github.com/pauloamgomes/generator-docker4drupal",
   "author": {
     "name": "Paulo Gomes",
     "email": "pauloamgomes@gmail.com",
-    "url": ""
+    "url": "http://www.pauloamgomes.net"
   },
   "files": [
     "generators"
