@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Docker4Drupal.sh - helper script for handling docker-sync and docker-compose
+# docker4drupal.sh - helper script for handling docker-sync and docker-compose
 #                    start/stop commands.
 #                    It also provides a shell option for the php container.
 #
@@ -16,7 +16,7 @@ DRUPAL_MODE=<%= genType %>
 usage() {
   cat <<-EOF
 
-    USAGE: ../docker4drupal.sh [OPTIONS]
+    USAGE: ./docker4drupal.sh [OPTIONS]
 
     OPTIONS
 

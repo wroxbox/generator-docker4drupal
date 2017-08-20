@@ -1,5 +1,6 @@
 # generator-docker4drupal
-<https://npmjs.org/package/generator-docker4drupal> <https://travis-ci.org/pauloamgomes/generator-docker4drupal> <https://david-dm.org/pauloamgomes/generator-docker4drupal>
+<https://npmjs.org/package/generator-docker4drupal>
+<https://david-dm.org/pauloamgomes/generator-docker4drupal>
 
  
 A basic generator for docker4drupal stack that permits easily the generation of
@@ -64,7 +65,7 @@ add the Drupal files in docroot/web.
 The bash script file docker4drupal.sh can be used for various operations:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    USAGE: ../docker4drupal.sh [OPTIONS]
+    USAGE: ./docker4drupal.sh [OPTIONS]
 
     OPTIONS
 
