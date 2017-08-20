@@ -144,7 +144,7 @@ if [ ! -f "docker/docker-sync.yml" ]; then
 fi
 
 if [ $DRUPAL_MODE == "custom" ]; then
-  if [[ (! -f "docroot/index.php") && (! -f "docroot/web/index.php") ]]; then
+  if [[ (! -d "docroot/web/core") || (! -f "docroot/web/index.php") ]]; then
     exitError "cannot find a valid drupal codebase at ./docroot or ./docroot/web"
   fi
 fi
