@@ -194,8 +194,8 @@ services:
     image: traefik
     command: -c /dev/null --web --docker --logLevel=INFO --defaultEntryPoints='http' --defaultEntryPoints='https' --entryPoints="Name:https Address::443 TLS:/certs/cert.pem,/certs/key.pem" --entryPoints="Name:http Address::80"
     ports:
-      - '80:80'
-      - '443:443'
+      - '<%= httpPort %>:80'
+      - '<%= httpsPort %>:443'
 #      - '8000:80'
 #      - '8080:8080' # Dashboard
     volumes:

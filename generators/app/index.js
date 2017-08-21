@@ -11,12 +11,12 @@ const phpImages = {
     {value: 'wodby/drupal:8-7.0-2.4.4', name: 'Drupal 8 - PHP 7.0'},
     {value: 'wodby/drupal:7-7.1-2.4.4', name: 'Drupal 7 - PHP 7.1'},
     {value: 'wodby/drupal:7-7.0-2.4.4', name: 'Drupal 7 - PHP 7.0'},
-    {value: 'wodby/drupal:7-5.6-2.4.4', name: 'Drupal 7 - PHP 5.6'},
+    {value: 'wodby/drupal:7-5.6-2.4.4', name: 'Drupal 7 - PHP 5.6'}
   ],
   custom: [
     {value: 'wodby/drupal-php:7.1-2.4.3', name: 'PHP 7.1'},
     {value: 'wodby/drupal-php:7.0-2.4.3', name: 'PHP 7.0'},
-    {value: 'wodby/drupal-php:5.6-2.4.3', name: 'PHP 5.6'},
+    {value: 'wodby/drupal-php:5.6-2.4.3', name: 'PHP 5.6'}
   ]
 };
 
@@ -90,8 +90,8 @@ module.exports = class extends Generator {
       name: 'drupalVersion',
       message: 'Drupal Version',
       choices: [
-        {value: "D8", name: "Drupal 8"},
-        {value: "D7", name: "Drupal 7"}
+        {value: 'D8', name: 'Drupal 8'},
+        {value: 'D7', name: 'Drupal 7'}
       ],
       when: function (answers) {
         return answers.genType === 'custom';
@@ -114,8 +114,18 @@ module.exports = class extends Generator {
       name: 'domain',
       message: 'What is your drupal site domain? Ex: drupal.docker.localhost',
       default: function (answers) {
-        return `${answers.siteMachineName}.docker.localhost`
+        return `${answers.siteMachineName}.docker.localhost`;
       }
+    },
+    {
+      name: 'httpPort',
+      message: 'http port? Ex: 80, 8081, 8082',
+      default: '80'
+    },
+    {
+      name: 'httpsPort',
+      message: 'https port? Ex: 443, 8443, 9443',
+      default: '443'
     }];
 
     return this.prompt(prompts).then(props => {
@@ -124,11 +134,11 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    var drupalVersion = "D8"
-    if (this.props.genType == 'vanilla') {
+    var drupalVersion = 'D8';
+    if (this.props.genType === 'vanilla') {
       drupalVersion = 'D' + this.props.phpImage.match(/^wodby\/drupal:([7-8])-/)[1];
     } else {
-      drupalVersion = this.props.drupalVersion
+      drupalVersion = this.props.drupalVersion;
     }
 
     this.fs.copyTpl(
@@ -138,7 +148,9 @@ module.exports = class extends Generator {
         domain: this.props.domain,
         instance: this.props.siteMachineName,
         phpImage: this.props.phpImage,
-        nginxImage: nginxImages[drupalVersion]
+        nginxImage: nginxImages[drupalVersion],
+        httpPort: this.props.httpPort,
+        httpsPort: this.props.httpsPort
       }
     );
     this.fs.copyTpl(
@@ -179,6 +191,6 @@ module.exports = class extends Generator {
 
   install() {
     this.spawnCommand('openssl', ['req', '-x509', '-nodes', '-days', '365', '-newkey', 'rsa:2048', '-subj', '/C=UK/ST=Drupal/L=Mars/O=Dis/CN=' + this.props.domain, '-keyout', 'certs/key.pem', '-out', 'certs/cert.pem']);
-    this.log('Docker and Drupal related files generated.')
+    this.log('Docker and Drupal related files generated.');
   }
 };
