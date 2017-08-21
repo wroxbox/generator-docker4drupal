@@ -178,7 +178,7 @@ module.exports = class extends Generator {
   }
 
   install() {
-    this.spawnCommand('openssl', ['req', '-x509', '-nodes', '-days', '365', '-newkey', 'rsa:2048', '-subj', '/C=UK/ST=Drupal/L=Mars/O=Dis/CN=drupal.docker.localhost', '-keyout', 'certs/key.pem', '-out', 'certs/cert.pem']);
+    this.spawnCommand('openssl', ['req', '-x509', '-nodes', '-days', '365', '-newkey', 'rsa:2048', '-subj', '/C=UK/ST=Drupal/L=Mars/O=Dis/CN=' + this.props.domain, '-keyout', 'certs/key.pem', '-out', 'certs/cert.pem']);
     this.log('Docker and Drupal related files generated.')
   }
 };
