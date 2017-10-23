@@ -7,22 +7,20 @@ var mkdirp = require('mkdirp');
 
 const phpImages = {
   vanilla: [
-    {value: 'wodby/drupal:8-7.1-2.4.4', name: 'Drupal 8 - PHP 7.1'},
-    {value: 'wodby/drupal:8-7.0-2.4.4', name: 'Drupal 8 - PHP 7.0'},
-    {value: 'wodby/drupal:7-7.1-2.4.4', name: 'Drupal 7 - PHP 7.1'},
-    {value: 'wodby/drupal:7-7.0-2.4.4', name: 'Drupal 7 - PHP 7.0'},
-    {value: 'wodby/drupal:7-5.6-2.4.4', name: 'Drupal 7 - PHP 5.6'}
+    {value: 'wodby/drupal:8-7.0-3.0.0', name: 'Drupal 8 - PHP 7.1'},
+    {value: 'wodby/drupal:8-7.0-2.4.4', name: 'Drupal 7 - PHP 7.1'},
+    {value: 'wodby/drupal:7-5.6-3.0.0', name: 'Drupal 7 - PHP 5.6'}
   ],
   custom: [
-    {value: 'wodby/drupal-php:7.1-2.4.3', name: 'PHP 7.1'},
-    {value: 'wodby/drupal-php:7.0-2.4.3', name: 'PHP 7.0'},
-    {value: 'wodby/drupal-php:5.6-2.4.3', name: 'PHP 5.6'}
+    {value: 'wodby/drupal-php:7.1-3.0.0', name: 'PHP 7.1'},
+    {value: 'wodby/drupal-php:7.0-3.0.0', name: 'PHP 7.0'},
+    {value: 'wodby/drupal-php:5.6-3.0.0', name: 'PHP 5.6'}
   ]
 };
 
 const nginxImages = {
-  D8: 'wodby/drupal-nginx:8-1.13-2.4.2',
-  D7: 'wodby/drupal-nginx:7-1.13-2.4.2'
+  D8: 'wodby/drupal-nginx:8-1.13-3.0.1',
+  D7: 'wodby/drupal-nginx:7-1.13-3.0.1'
 };
 
 module.exports = class extends Generator {
@@ -168,6 +166,22 @@ module.exports = class extends Generator {
         siteName: this.props.siteName,
         domain: this.props.domain,
         genType: this.props.genType
+      }
+    );
+    // Drush helper script.
+    this.fs.copyTpl(
+      this.templatePath('drush.sh'),
+      this.destinationPath('docker/drush.sh'),
+      {
+        instance: this.props.siteMachineName
+      }
+    );
+    // Mysql helper script.
+    this.fs.copyTpl(
+      this.templatePath('mysql.sh'),
+      this.destinationPath('docker/mysql.sh'),
+      {
+        instance: this.props.siteMachineName
       }
     );
     // Only for D8.

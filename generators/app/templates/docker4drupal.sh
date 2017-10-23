@@ -61,9 +61,25 @@ start() {
   echo "Starting docker-sync..."
   docker-sync start || exitError "Error initializing docker-sync"
   echo "Done!"
+  echo
   echo "Starting docker-compose..."
   docker-compose up -d || exitError "Error initializing docker-compose"
   echo "Done!"
+  echo
+  # On first run give some time for full docker sync ends.
+  if [ ! -d "../docroot/vendor" ] || [ ! -d "../docroot/web/core" ]; then
+    echo "First execution. Docker Sync is doing a full sync, it can take 1 minute or more, please wait..."
+    sleep 90
+    if [ $DRUPAL_MODE == "vanilla" ]; then
+      echo "Installing Drupal..."
+      docker-compose exec --user=82 php-<%= instance %> drush -r /var/www/html/web si standard --db-url=mysql://drupal:drupal@mariadb-<%= instance %>/drupal --account-name=admin --account-pass=admin -y
+      echo
+      echo "Drupal installed"
+      echo
+      echo " username: admin"
+      echo " password: admin"
+    fi
+  fi
   echo
   status
   echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -145,7 +161,7 @@ fi
 
 if [ $DRUPAL_MODE == "custom" ]; then
   if [[ (! -d "docroot/web/core") || (! -f "docroot/web/index.php") ]]; then
-    exitError "cannot find a valid drupal codebase at ./docroot or ./docroot/web"
+    exitError "cannot find a valid drupal codebase at ./docroot/web"
   fi
 fi
 

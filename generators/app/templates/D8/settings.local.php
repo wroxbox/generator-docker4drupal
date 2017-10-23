@@ -148,6 +148,7 @@ $_SERVER['HTTPS'] = 'on';
  * example.org, with all subdomains included.
  */
 $settings['trusted_host_patterns'] = [
+  '^<%= domain %>$',
   '^.*\.<%= domain %>$',
 ];
 
