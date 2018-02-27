@@ -11,7 +11,8 @@
 #       20.08.2017 - initial release
 #
 
-DRUPAL_MODE=<%= genType %>
+DRUPAL_MODE="<%= genType %>"
+DRUPAL_VERSION="<%= version %>"
 
 usage() {
   cat <<-EOF
@@ -20,14 +21,20 @@ usage() {
 
     OPTIONS
 
-      start     Starts docker-sync and docker-compose containers.
-      stop      Stops docker-sync and docker-compose containers.
-      shell     Opens a bash shell in the docker php container.
-      status    Display status of running containers.
-      hosts     Add container endpoints to /etc/hosts file (requires sudo).
-                Use sudo ./docker4drupal.sh hosts
-      recreate  Recreates all containers (ALL DATA WILL BE ERASED)
-      help      Display list of useful docker commands.
+      start       Starts docker-sync and docker-compose containers.
+      stop        Stops docker-sync and docker-compose containers.
+      shell       Opens a bash shell in the docker php container.
+                  Use ./docker4drupal.sh shell root to run as root.
+      status      Display status of running containers.
+      hosts       Add container endpoints to /etc/hosts file (requires sudo).
+                  Use sudo ./docker4drupal.sh hosts
+      recreate    Recreates all containers (ALL DATA WILL BE ERASED)
+      drush       Run drush command inside php container
+      reinstall   Forces installation of drupal
+      db-backup   Creates a database dump
+      db-restore  Restores a database dump
+      db-cli      Opens the mysql cli
+      help        Display list of useful docker commands.
 
 EOF
 }
@@ -67,12 +74,16 @@ start() {
   echo "Done!"
   echo
   # On first run give some time for full docker sync ends.
-  if [ ! -d "../docroot/vendor" ] || [ ! -d "../docroot/web/core" ]; then
+  if [ ! -d "../docroot/web/modules" ]; then
     echo "First execution. Docker Sync is doing a full sync, it can take 1 minute or more, please wait..."
-    sleep 90
+    if [ $DRUPAL_VERSION == "D8"]; then
+      sleep 90
+    else
+      sleep 30
+    fi
     if [ $DRUPAL_MODE == "vanilla" ]; then
       echo "Installing Drupal..."
-      docker-compose exec --user=82 php-<%= instance %> drush -r /var/www/html/web si standard --db-url=mysql://drupal:drupal@mariadb-<%= instance %>/drupal --account-name=admin --account-pass=admin -y
+      install
       echo
       echo "Drupal installed"
       echo
@@ -86,6 +97,10 @@ start() {
   echo
   commands
   echo
+}
+
+install() {
+  docker-compose exec --user=82 php-<%= instance %> drush -r /var/www/html/web si standard --db-url=mysql://drupal:drupal@mariadb-<%= instance %>/drupal --account-name=admin --account-pass=admin -y
 }
 
 stop() {
@@ -102,7 +117,11 @@ shell() {
   echo
   echo "Opening bash shell for container php-<%= instance %>"
   echo
-  docker-compose exec --user=82 php-<%= instance %> bash
+  if [ x"$1" == x"root" ]; then
+    docker-compose exec --user=root php-<%= instance %> bash
+  else
+    docker-compose exec --user=82 php-<%= instance %> bash
+  fi
 }
 
 hosts() {
@@ -165,35 +184,45 @@ if [ $DRUPAL_MODE == "custom" ]; then
   fi
 fi
 
+shift
+cd docker
+
 case "$COMMAND" in
  start)
-  cd docker
   start
   ;;
  stop)
-  cd docker
   stop
   ;;
  shell)
-  cd docker
-  shell
+  shell $@
   ;;
  status)
-  cd docker
   status
   ;;
  hosts)
   hosts
-  exit 0
   ;;
  recreate)
-  cd docker
   recreate
-  exit 0
+  ;;
+ drush)
+  ./drush.sh $@
+  ;;
+ reinstall)
+  install
+  ;;
+ db-backup)
+  ./mysql.sh backup
+  ;;
+ db-restore)
+  ./mysql.sh restore $@
+  ;;
+ db-cli)
+  ./mysql.sh cli
   ;;
  help)
   showHelp
-  exit 0
   ;;
  *)
   echo "ERROR: unknown command \"$COMMAND\""
@@ -201,4 +230,6 @@ case "$COMMAND" in
   exit 1
   ;;
 esac
+
+exit 0
 

@@ -2,7 +2,7 @@ version: "2"
 
 services:
   mariadb-<%= instance %>:
-    image: wodby/mariadb:10.1-2.3.5
+    image: wodby/mariadb:10.2-3.0.2
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: drupal
@@ -15,20 +15,25 @@ services:
   php-<%= instance %>:
     image: <%= phpImage %>
 # 1. Images with vanilla Drupal – wodby/drupal:[DRUPAL_VERSION]-[PHP_VERSION]-[STABILITY_TAG].
-#    image: wodby/drupal:8-7.1-3.0.0
-#    image: wodby/drupal:8-7.0-3.0.0
-#    image: wodby/drupal:7-7.1-3.0.0
-#    image: wodby/drupal:7-7.0-3.0.0
-#    image: wodby/drupal:7-5.6-3.0.0
-#    image: wodby/drupal:6-5.6-3.0.0
-#    image: wodby/drupal:6-5.3-3.0.0
+#    image: wodby/drupal:8-7.0-3.3.2
+#    image: wodby/drupal:7-7.1-3.3.2
+#    image: wodby/drupal:7-7.0-3.3.2
+#    image: wodby/drupal:7-5.6-3.3.2
+#    image: wodby/drupal:6-5.6-3.3.2
+#    image: wodby/drupal:6-5.3-3.3.2
 # 2. Images without Drupal – wodby/drupal-php:[PHP_VERSION]-[STABILITY_TAG].
-#    image: wodby/drupal-php:7.1-3.0.0
-#    image: wodby/drupal-php:7.0-3.0.0
-#    image: wodby/drupal-php:5.6-3.0.0
-#    image: wodby/drupal-php:5.3-3.0.0
+#    image: wodby/drupal-php:7.1-3.3.1
+#    image: wodby/drupal-php:7.0-3.3.1
+#    image: wodby/drupal-php:5.6-3.3.1
+#    image: wodby/drupal-php:5.3-3.3.1
+# 3. Images without Drupal – wodby/drupal-php:[PHP_VERSION]-[STABILITY_TAG]. Version for development (--enable-debug)
+#    image: wodby/drupal-php:7.1-dev-3.3.1
+#    image: wodby/drupal-php:7.0-dev-3.3.1
+#    image: wodby/drupal-php:5.6-dev-3.3.1
+#    image: wodby/drupal-php:5.3-dev-3.3.1
     environment:
       PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog-<%= instance %>:1025
+      PHP_FPM_CLEAR_ENV: "no"
       DB_HOST: mariadb-<%= instance %>
       DB_USER: drupal
       DB_PASSWORD: drupal
@@ -40,6 +45,7 @@ services:
 #      PHP_XDEBUG_REMOTE_HOST: "10.254.254.254"
 #      PHP_XDEBUG_PROFILER_OUTPUT_DIR: /mnt/files/xdebug/profiler
 #      PHP_XDEBUG_TRACE_OUTPUT_DIR: /mnt/files/xdebug/traces
+#      PHP_BLACKFIRE: 1
     volumes:
 #      - codebase:/var/www/html
 # Options for macOS users (http://docs.docker4drupal.org/en/latest/macos)
@@ -51,12 +57,11 @@ services:
   nginx-<%= instance %>:
 # wodby/drupal-nginx:[DRUPAL_VERSION]-[NGINX_VERSION]-[STABILITY_TAG].
     image: <%= nginxImage %>
-#    image: wodby/drupal-nginx:8-1.13-3.0.1
-#    image: wodby/drupal-nginx:7-1.13-3.0.1
-#    image: wodby/drupal-nginx:6-1.13-3.0.1
-#    image: wodby/drupal-nginx:8-1.12-3.0.1
-#    image: wodby/drupal-nginx:7-1.12-3.0.1
-#    image: wodby/drupal-nginx:6-1.12-3.0.1
+#    image: wodby/drupal-nginx:7-1.13-3.0.2
+#    image: wodby/drupal-nginx:6-1.13-3.0.2
+#    image: wodby/drupal-nginx:8-1.12-3.0.2
+#    image: wodby/drupal-nginx:7-1.12-3.0.2
+#    image: wodby/drupal-nginx:6-1.12-3.0.2
     depends_on:
       - php-<%= instance %>
     environment:
@@ -64,6 +69,7 @@ services:
       NGINX_ERROR_LOG_LEVEL: debug
       NGINX_BACKEND_HOST: php-<%= instance %>
       NGINX_SERVER_ROOT: /var/www/html/web
+#      NGINX_DRUPAL_FILE_PROXY_URL: example.com
     volumes:
 #      - codebase:/var/www/html
 # Options for macOS users (http://docs.docker4drupal.org/en/latest/macos)
@@ -105,8 +111,8 @@ services:
 #      - 'traefik.port=6081'
 #      - 'traefik.frontend.rule=Host:varnish.<%= domain %>'
 
-#  redis:
-#    image: wodby/redis:3.2-2.1.3
+<%= redis %>  redis-<%= instance %>:
+<%= redis %>    image: wodby/redis:3.2-2.1.3
 ##    image: wodby/redis:4.0-2.1.3
 
 #  adminer:
@@ -117,7 +123,6 @@ services:
 #      - 'traefik.backend=adminer'
 #      - 'traefik.port=9000'
 #      - 'traefik.frontend.rule=Host:adminer.<%= domain %>'
-
 
   pma-<%= instance %>:
     image: phpmyadmin/phpmyadmin
@@ -132,20 +137,22 @@ services:
       - 'traefik.port=80'
       - 'traefik.frontend.rule=Host:pma.<%= domain %>'
 
-#  solr:
+<%= solr %>  solr-<%= instance %>:
 ## wodby/drupal-solr:[DRUPAL_VERSION]-[SOLR_VERSION]-[STABILITY_TAG].
-#    image: wodby/drupal-solr:8-6.6-2.2.0
-##    image: wodby/drupal-solr:8-6.5-2.2.0
-##    image: wodby/drupal-solr:8-6.4-2.2.0
-##    image: wodby/drupal-solr:8-6.3-2.2.0
-##    image: wodby/drupal-solr:8-5.5-2.2.0
-##    image: wodby/drupal-solr:7-5.4-2.2.0
-#    environment:
-#      SOLR_HEAP: 1024m
-#    labels:
-#      - 'traefik.backend=solr'
-#      - 'traefik.port=8983'
-#      - 'traefik.frontend.rule=Host:solr.<%= domain %>'
+<%= solr %>    image: wodby/drupal-solr:8-6.6-2.3.0
+##    image: wodby/drupal-solr:8-6.5-2.3.0
+##    image: wodby/drupal-solr:8-6.4-2.3.0
+##    image: wodby/drupal-solr:8-6.3-2.3.0
+##    image: wodby/drupal-solr:8-5.5-2.3.0
+##    image: wodby/drupal-solr:8-7.0-2.3.0
+##    image: wodby/drupal-solr:8-7.1-2.3.0
+##    image: wodby/drupal-solr:7-5.4-2.3.0
+<%= solr %>    environment:
+<%= solr %>      SOLR_HEAP: 1024m
+<%= solr %>    labels:
+<%= solr %>      - 'traefik.backend=solr'
+<%= solr %>      - 'traefik.port=8983'
+<%= solr %>      - 'traefik.frontend.rule=Host:solr.<%= domain %>'
 
   mailhog-<%= instance %>:
     image: mailhog/mailhog
@@ -154,7 +161,7 @@ services:
       - 'traefik.port=8025'
       - 'traefik.frontend.rule=Host:mailhog.<%= domain %>'
 
-#  nodejs:
+#  nodejs-<%= instance %>:
 #    image: wodby/drupal-node:1.0-1.0.0
 #    environment:
 #       NODE_SERVICE_KEY: node-service-key
@@ -166,7 +173,7 @@ services:
 #      - ./path/to/your/single-page-app:/app
 #    command: sh -c 'npm install && npm run start'
 
-#  node:
+#  node-<%= instance %>:
 #    image: node:alpine
 #    working_dir: /app
 #    labels:
@@ -179,19 +186,13 @@ services:
 #      - ./path/to/your/single-page-app:/app
 #    command: sh -c 'npm install && npm run start'
 
-#  memcached:
+#  memcached-<%= instance %>:
 #    image: wodby/memcached:1.4-2.0.0
 
-#  rsyslog:
+#  rsyslog-<%= instance %>:
 #    image: wodby/rsyslog
 
-#  memcached:
-#    image: wodby/memcached:1.4-2.0.0
-
-#  rsyslog:
-#    image: wodby/rsyslog
-
-#  athenapdf:
+#  athenapdf-<%= instance %>:
 #    image: arachnysdocker/athenapdf-service:2.10.0
 #    environment:
 #      WEAVER_AUTH_KEY: weaver-auth-key
@@ -201,13 +202,13 @@ services:
 #      WEAVER_WORKER_TIMEOUT: 90
 #      WEAVER_CONVERSION_FALLBACK: false
 
-#  blackfire:
+#  blackfire-<%= instance %>:
 #    image: blackfire/blackfire
 #    environment:
 #      BLACKFIRE_SERVER_ID: XXXXX
 #      BLACKFIRE_SERVER_TOKEN: YYYYY
 
-#  webgrind:
+#  webgrind-<%= instance %>:
 #    image: wodby/webgrind:1.5-1.0.0
 #    environment:
 #      WEBGRIND_PROFILER_DIR: /mnt/files/xdebug/profiler
@@ -218,7 +219,7 @@ services:
 #    volumes:
 #      - files:/mnt/files
 
-# portainer:
+# portainer-<%= instance %>:
 #   image: portainer/portainer
 #   command: --no-auth -H unix:///var/run/docker.sock
 #   volumes:

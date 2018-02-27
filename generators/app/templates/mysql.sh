@@ -30,25 +30,26 @@ restore() {
     fi
 
     echo "Restoring mysql dump $DUMP. Please wait, it can take some minutes..."
-    INSTANCE=`docker ps | grep php<%= instance %> | awk  '{print $1}'`
+    INSTANCE=`docker ps | grep php-<%= instance %> | awk  '{print $1}'`
     if [ x"$INSTANCE" = x"" ]; then
-        echo "Error! Cannot find php<%= instance %> docker instance."
+        echo "Error! Cannot find php-<%= instance %> docker instance."
         exit 1
     fi
-    docker exec -i $INSTANCE mysql -u root -proot -h mariadb<%= instance %> drupal < $DUMP
+    docker exec -i $INSTANCE mysql -A -u drupal -pdrupal -h mariadb-<%= instance %> drupal < $DUMP
     echo "Done!"
 }
 
 backup() {
-    FILENAME="<%= instance %>-db-`$(date +"%m_%d_%Y_%H_%m")`.sql"
+    FILENAME="<%= instance %>-db-$(date +"%m_%d_%Y_%H_%m").sql"
 
     echo "Creating mysql dump $FILENAME ..."
-    docker-compose exec --user=82 php<%= instance %> drush sql-dump > $FILENAME
-    echo "Done!"
+    docker-compose exec --user=82 php-<%= instance %> drush -r /var/www/html/web sql-dump > ../$FILENAME
+    cd ..
+    echo "Done! `du -sh $FILENAME`"
 }
 
 cli() {
-    docker-compose exec --user=82 php<%= instance %> drush sql-cli
+    docker-compose exec --user=82 php-<%= instance %> drush -r /var/www/html/web sql-cli
 }
 
 COMMAND=`echo $1 | sed 's/^[^=]*=//g'`

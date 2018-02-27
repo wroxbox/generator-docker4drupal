@@ -4,71 +4,73 @@ const chalk = require('chalk');
 const yosay = require('yosay');
 var _ = require('lodash');
 var mkdirp = require('mkdirp');
+var sleep = require('sleep');
 
 const phpImages = {
   vanilla: [
-    {value: 'wodby/drupal:8-7.0-3.0.0', name: 'Drupal 8 - PHP 7.1'},
-    {value: 'wodby/drupal:8-7.0-2.4.4', name: 'Drupal 7 - PHP 7.1'},
-    {value: 'wodby/drupal:7-5.6-3.0.0', name: 'Drupal 7 - PHP 5.6'}
+    {value: 'wodby/drupal:8-7.1-3.3.2', name: 'Drupal 8 - PHP 7.1'},
+    {value: 'wodby/drupal:7-7.1-3.3.2', name: 'Drupal 7 - PHP 7.1'},
+    {value: 'wodby/drupal:7-5.6-3.3.2', name: 'Drupal 7 - PHP 5.6'}
   ],
   custom: [
-    {value: 'wodby/drupal-php:7.1-3.0.0', name: 'PHP 7.1'},
-    {value: 'wodby/drupal-php:7.0-3.0.0', name: 'PHP 7.0'},
-    {value: 'wodby/drupal-php:5.6-3.0.0', name: 'PHP 5.6'}
+    {value: 'wodby/drupal-php:7.1-3.3.1', name: 'PHP 7.1'},
+    {value: 'wodby/drupal-php:7.0-3.3.1', name: 'PHP 7.0'},
+    {value: 'wodby/drupal-php:5.6-3.3.1', name: 'PHP 5.6'}
   ]
 };
 
 const nginxImages = {
-  D8: 'wodby/drupal-nginx:8-1.13-3.0.1',
-  D7: 'wodby/drupal-nginx:7-1.13-3.0.1'
+  D8: 'wodby/drupal-nginx:8-1.13-3.0.2',
+  D7: 'wodby/drupal-nginx:7-1.13-3.0.2'
 };
 
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
+    this.log('\x1Bc');
+    this.log(chalk.cyan('                                           '));
+    this.log(chalk.cyan('                    `/.                    '));
+    this.log(chalk.cyan('                    /yys+-                 '));
+    this.log(chalk.cyan('                 `:syyyyyys/.              '));
+    this.log(chalk.cyan('              `:oyyyyyyyyyyyys/`           '));
+    this.log(chalk.cyan('            .+yyyyyyyyyyyyyyyyyy+.         '));
+    this.log(chalk.cyan('          `+yyyyyyyyyyyyyyyyyyyyyy/        '));
+    this.log(chalk.cyan('         `oyyyyyyyyyyyyyyyyyyyyyyyyo`      '));
+    this.log(chalk.cyan('         +yyyyyyyyyyyyyyyyyyyyyyyyyy+      '));
+    this.log(chalk.cyan('        .yyyyyyyyyyyyyyyyyyyyyyyyyyyy.     '));
+    this.log(chalk.cyan('        :yyyyyyyys+//+oyyyyyyyyysosyy:     '));
+    this.log(chalk.cyan('        -yyyyyys.       .+yyyo:`   .y-     '));
+    this.log(chalk.cyan('         syyyyy-          `/.       o      '));
+    this.log(chalk.cyan('         .yyyyy+        `:sy/      /.      '));
+    this.log(chalk.cyan('          .syyyys:...-/oyo/:ss/--/o.       '));
+    this.log(chalk.cyan('           `/yyyyyyyyy/osyyyosyyy/`        '));
+    this.log(chalk.cyan('             `:oyyyyyys/:://oyo:`          '));
+    this.log(chalk.cyan('                `-:+oossoo+:-`             '));
+    this.log(chalk.cyan('                                           '));
 
-    this.log('                                             ');
-    this.log('                      `/.                    ');
-    this.log('                      /yys+-                 ');
-    this.log('                   `:syyyyyys/.              ');
-    this.log('                `:oyyyyyyyyyyyys/`           ');
-    this.log('              .+yyyyyyyyyyyyyyyyyy+.         ');
-    this.log('            `+yyyyyyyyyyyyyyyyyyyyyy/        ');
-    this.log('           `oyyyyyyyyyyyyyyyyyyyyyyyyo`      ');
-    this.log('           +yyyyyyyyyyyyyyyyyyyyyyyyyy+      ');
-    this.log('          .yyyyyyyyyyyyyyyyyyyyyyyyyyyy.     ');
-    this.log('          :yyyyyyyys+//+oyyyyyyyyysosyy:     ');
-    this.log('          -yyyyyys.       .+yyyo:`   .y-     ');
-    this.log('           syyyyy-          `/.       o      ');
-    this.log('           .yyyyy+        `:sy/      /.      ');
-    this.log('            .syyyys:...-/oyo/:ss/--/o.       ');
-    this.log('             `/yyyyyyyyy/osyyyosyyy/`        ');
-    this.log('               `:oyyyyyys/:://oyo:`          ');
-    this.log('                  `-:+oossoo+:-`             ');
-    this.log('                                             ');
     this.log(yosay(
-      'Welcome to the ' + chalk.yellow('Docker4Drupal') + ' generator!'
+      'Welcome to the ' + chalk.yellow('docker4drupal') + ' generator!'
     ));
 
     const prompts = [{
       type: 'list',
       name: 'genType',
-      message: 'What kind of Drupal Docker you want?',
+      message: 'docker4drupal codebase? ',
       choices: [
         {
           value: 'vanilla',
-          name: 'Run Vanilla Drupal from Image'
+          name: 'Downloads Drupal using docker4drupal defaults'
         },
         {
           value: 'custom',
-          name: 'Mount my Drupal Codebase'
+          name: 'Run Drupal from an existing codebase'
         }
       ]
     },
     {
       type: 'list',
       name: 'phpImage',
-      message: 'Docker PHP Image',
+      message: 'Docker PHP Image? ',
       choices: phpImages.vanilla,
       when: function (answers) {
         return answers.genType === 'vanilla';
@@ -77,7 +79,7 @@ module.exports = class extends Generator {
     {
       type: 'list',
       name: 'phpImage',
-      message: 'Docker PHP Image',
+      message: 'Docker PHP Image? ',
       choices: phpImages.custom,
       when: function (answers) {
         return answers.genType === 'custom';
@@ -86,7 +88,7 @@ module.exports = class extends Generator {
     {
       type: 'list',
       name: 'drupalVersion',
-      message: 'Drupal Version',
+      message: 'Drupal Version? ',
       choices: [
         {value: 'D8', name: 'Drupal 8'},
         {value: 'D7', name: 'Drupal 7'}
@@ -97,7 +99,7 @@ module.exports = class extends Generator {
     },
     {
       name: 'siteName',
-      message: 'What is your drupal site name?',
+      message: 'What is your drupal site name? ',
       default: _.startCase(this.appname)
     },
     {
@@ -124,6 +126,36 @@ module.exports = class extends Generator {
       name: 'httpsPort',
       message: 'https port? Ex: 443, 8443, 9443',
       default: '443'
+    },
+    {
+      type: 'list',
+      name: 'solr',
+      message: 'Enable Apache SOLR? ',
+      choices: [
+        {
+          value: '',
+          name: 'Yes'
+        },
+        {
+          value: '#',
+          name: 'No'
+        }
+      ]
+    },
+    {
+      type: 'list',
+      name: 'redis',
+      message: 'Enable Redis? ',
+      choices: [
+        {
+          value: '',
+          name: 'Yes'
+        },
+        {
+          value: '#',
+          name: 'No'
+        }
+      ]
     }];
 
     return this.prompt(prompts).then(props => {
@@ -148,7 +180,9 @@ module.exports = class extends Generator {
         phpImage: this.props.phpImage,
         nginxImage: nginxImages[drupalVersion],
         httpPort: this.props.httpPort,
-        httpsPort: this.props.httpsPort
+        httpsPort: this.props.httpsPort,
+        solr: this.props.solr,
+        redis: this.props.redis
       }
     );
     this.fs.copyTpl(
@@ -165,7 +199,8 @@ module.exports = class extends Generator {
         instance: this.props.siteMachineName,
         siteName: this.props.siteName,
         domain: this.props.domain,
-        genType: this.props.genType
+        genType: this.props.genType,
+        version: drupalVersion
       }
     );
     // Drush helper script.
@@ -205,6 +240,8 @@ module.exports = class extends Generator {
 
   install() {
     this.spawnCommand('openssl', ['req', '-x509', '-nodes', '-days', '365', '-newkey', 'rsa:2048', '-subj', '/C=UK/ST=Drupal/L=Mars/O=Dis/CN=' + this.props.domain, '-keyout', 'certs/key.pem', '-out', 'certs/cert.pem']);
-    this.log('Docker and Drupal related files generated.');
+    sleep.sleep(5);
+    this.log(chalk.green('\nDocker and Drupal related files generated.'));
+    this.log(chalk.bold.yellow('Run ./docker4drupal.sh for list of available commands'));
   }
 };

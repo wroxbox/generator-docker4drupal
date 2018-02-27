@@ -38,6 +38,8 @@ Generated project will contain the following structure:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .
 +-- docker4drupal.sh
++-- mysql.sh
++-- drush.sh
 +-- certs
 |   +-- cert.pem
 |   +-- key.pem
@@ -49,7 +51,6 @@ Generated project will contain the following structure:
 |       +-- settings.local.php
 +-- docroot
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
  
 
 The certs folder provides pre-generated self signed certificates for using https
@@ -69,16 +70,24 @@ The bash script file docker4drupal.sh can be used for various operations:
 
     OPTIONS
 
-      start     Starts docker-sync and docker-compose containers.
-      stop      Stops docker-sync and docker-compose containers.
-      shell     Opens a bash shell in the docker php container.
-      status    Display status of running containers.
-      hosts     Add container endpoints to /etc/hosts file (requires sudo).
-                Use sudo ./docker4drupal.sh hosts
-      recreate  Recreates all containers (ALL DATA WILL BE ERASED)
-      help      Display list of useful docker commands.
+      start       Starts docker-sync and docker-compose containers.
+      stop        Stops docker-sync and docker-compose containers.
+      shell       Opens a bash shell in the docker php container.
+                  Use ./docker4drupal.sh shell root to run as root.
+      status      Display status of running containers.
+      hosts       Add container endpoints to /etc/hosts file (requires sudo).
+                  Use sudo ./docker4drupal.sh hosts
+      recreate    Recreates all containers (ALL DATA WILL BE ERASED)
+      drush       Run drush command inside php container
+      reinstall   Forces installation of drupal
+      db-backup   Creates a database dump
+      db-restore  Restores a database dump
+      db-cli      Opens the mysql cli
+      help        Display list of useful docker commands.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+When using vanilla option when running ./docker4drupal.sh start for the first time,
+Drupal will be automatically installed.
  
 
 Getting To Know Yeoman

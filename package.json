@@ -29,7 +29,8 @@
   "dependencies": {
     "chalk": "^2.2.0",
     "yeoman-generator": "^1.1.1",
-    "yosay": "^2.0.0"
+    "yosay": "^2.0.0",
+    "sleep": "^5.1.1"
   },
   "jest": {
     "testEnvironment": "node"
