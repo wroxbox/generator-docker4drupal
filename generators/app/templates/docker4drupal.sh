@@ -76,7 +76,7 @@ start() {
   # On first run give some time for full docker sync ends.
   if [ ! -d "../docroot/web/modules" ]; then
     echo "First execution. Docker Sync is doing a full sync, it can take 1 minute or more, please wait..."
-    if [ $DRUPAL_VERSION == "D8"]; then
+    if [ $DRUPAL_VERSION == "D8" ]; then
       sleep 90
     else
       sleep 30
