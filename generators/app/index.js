@@ -8,20 +8,20 @@ var sleep = require('sleep');
 
 const phpImages = {
   vanilla: [
-    {value: 'wodby/drupal:8-7.1-3.3.2', name: 'Drupal 8 - PHP 7.1'},
-    {value: 'wodby/drupal:7-7.1-3.3.2', name: 'Drupal 7 - PHP 7.1'},
-    {value: 'wodby/drupal:7-5.6-3.3.2', name: 'Drupal 7 - PHP 5.6'}
+    {value: 'wodby/drupal:8-7.1-4.4.2', name: 'Drupal 8 - PHP 7.1'},
+    {value: 'wodby/drupal:7-7.1-3.6.0', name: 'Drupal 7 - PHP 7.1'},
+    {value: 'wodby/drupal:7-5.6-3.6.0', name: 'Drupal 7 - PHP 5.6'}
   ],
   custom: [
-    {value: 'wodby/drupal-php:7.1-3.3.1', name: 'PHP 7.1'},
-    {value: 'wodby/drupal-php:7.0-3.3.1', name: 'PHP 7.0'},
-    {value: 'wodby/drupal-php:5.6-3.3.1', name: 'PHP 5.6'}
+    {value: 'wodby/drupal-php:7.1-4.4.1', name: 'PHP 7.1'},
+    {value: 'wodby/drupal-php:7.0-3.4.0', name: 'PHP 7.0'},
+    {value: 'wodby/drupal-php:5.6-3.4.0', name: 'PHP 5.6'}
   ]
 };
 
 const nginxImages = {
-  D8: 'wodby/drupal-nginx:8-1.13-3.0.2',
-  D7: 'wodby/drupal-nginx:7-1.13-3.0.2'
+  D8: 'wodby/drupal-nginx:8-1.14-4.1.0',
+  D7: 'wodby/drupal-nginx:7-1.14-3.0.4'
 };
 
 module.exports = class extends Generator {
