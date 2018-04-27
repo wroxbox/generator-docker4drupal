@@ -49,7 +49,7 @@ module.exports = class extends Generator {
     this.log(chalk.cyan('                                           '));
 
     this.log(yosay(
-      'Welcome to the ' + chalk.yellow('docker4drupal') + ' generator!'
+      'Welcome to the ' + chalk.yellow('docker4drupal') + ' generator - updated!'
     ));
 
     const prompts = [{
@@ -87,6 +87,14 @@ module.exports = class extends Generator {
     },
     {
       type: 'list',
+      name: 'mariaDBImages',
+      message: 'MariaDB version? ',
+      choices: [
+        {value: 'wodby/mariadb:10.2-3.1.3', name: 'MariaDB 10.2'}
+      ]
+    },
+    {
+      type: 'list',
       name: 'drupalVersion',
       message: 'Drupal Version? ',
       choices: [
@@ -112,9 +120,9 @@ module.exports = class extends Generator {
     },
     {
       name: 'domain',
-      message: 'What is your drupal site domain? Ex: drupal.docker.localhost',
+      message: 'What is your drupal site domain? Ex: projectX.local.dev',
       default: function (answers) {
-        return `${answers.siteMachineName}.docker.localhost`;
+        return `${answers.siteMachineName}.local.dev`;
       }
     },
     {
@@ -144,6 +152,18 @@ module.exports = class extends Generator {
     },
     {
       type: 'list',
+      name: 'solrVersion',
+      message: 'SOLR Version? ',
+      choices: [
+        {value: 'wodby/drupal-solr:8-7.2-2.4.0', name: 'Solr 7.2'},
+        {value: 'wodby/drupal-solr:8-6.6-2.4.0', name: 'Solr 6.6'}
+      ],
+      when: function (answers) {
+        return answers.solr === '';
+      }
+    },
+    {
+      type: 'list',
       name: 'redis',
       message: 'Enable Redis? ',
       choices: [
@@ -156,7 +176,83 @@ module.exports = class extends Generator {
           name: 'No'
         }
       ]
-    }];
+    },
+    {
+      type: 'list',
+      name: 'adminer',
+      message: 'Enable Adminer? ',
+      choices: [
+        {
+          value: '',
+          name: 'Yes'
+        },
+        {
+          value: '#',
+          name: 'No'
+        }
+      ]
+    },
+    {
+      type: 'list',
+      name: 'pma',
+      message: 'Enable PHPMyAdmin - pma? ',
+      choices: [
+        {
+          value: '',
+          name: 'Yes'
+        },
+        {
+          value: '#',
+          name: 'No'
+        }
+      ]
+    },
+    {
+      type: 'list',
+      name: 'memcached',
+      message: 'Enable Memcache? ',
+      choices: [
+        {
+          value: '',
+          name: 'Yes'
+        },
+        {
+          value: '#',
+          name: 'No'
+        }
+      ]
+    },
+    {
+      type: 'list',
+      name: 'rsyslog',
+      message: 'Enable rsyslog? ',
+      choices: [
+        {
+          value: '',
+          name: 'Yes'
+        },
+        {
+          value: '#',
+          name: 'No'
+        }
+      ]
+    },
+    {
+      type: 'list',
+      name: 'varnish',
+      message: 'Enable Varnish?',
+      choices: [
+        {
+          value: '',
+          name: 'Yes'
+        },
+        {
+          value: '#',
+          name: 'No'
+        }
+      ]
+    }
+    ];
 
     return this.prompt(prompts).then(props => {
       this.props = props;
@@ -179,10 +275,17 @@ module.exports = class extends Generator {
         instance: this.props.siteMachineName,
         phpImage: this.props.phpImage,
         nginxImage: nginxImages[drupalVersion],
+        mariaDBImages: this.props.mariaDBImages,
         httpPort: this.props.httpPort,
         httpsPort: this.props.httpsPort,
         solr: this.props.solr,
-        redis: this.props.redis
+        solrVersion: this.props.solrVersion,
+        redis: this.props.redis,
+        adminer: this.props.adminer,
+        pma: this.props.pma,
+        memcached: this.props.memcached,
+        rsyslog: this.props.rsyslog,
+        varnish: this.props.varnish
       }
     );
     this.fs.copyTpl(

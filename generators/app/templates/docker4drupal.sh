@@ -100,7 +100,7 @@ start() {
 }
 
 install() {
-  docker-compose exec --user=82 php-<%= instance %> drush -r /var/www/html/web si standard --db-url=mysql://drupal:drupal@mariadb-<%= instance %>/drupal --account-name=admin --account-pass=admin -y
+  docker-compose exec --user=82 php drush -r /var/www/html/web si standard --db-url=mysql://drupal:drupal@mariadb/drupal --account-name=admin --account-pass=admin -y
 }
 
 stop() {
@@ -115,12 +115,12 @@ stop() {
 
 shell() {
   echo
-  echo "Opening bash shell for container php-<%= instance %>"
+  echo "Opening bash shell for container <%= instance %>_php"
   echo
   if [ x"$1" == x"root" ]; then
-    docker-compose exec --user=root php-<%= instance %> bash
+    docker-compose exec --user=root <%= instance %>_php bash
   else
-    docker-compose exec --user=82 php-<%= instance %> bash
+    docker-compose exec --user=82 <%= instance %>_php bash
   fi
 }
 
@@ -129,13 +129,9 @@ hosts() {
   echo "Updating /etc/hosts file with docker entries"
   echo
   echo "# drupal4docker - <%= siteName %> "
-  echo "Adding <%= domain %> -> 127.0.0.1" >> /etc/hosts
-  echo -e "127.0.0.1\t<%= domain %>" >> /etc/hosts
-  echo "Adding mailhog.<%= domain %> -> 127.0.0.1"
-  echo -e "127.0.0.1\tmailhog.<%= domain %>" >> /etc/hosts
-  echo "Adding pma.<%= domain %> -> 127.0.0.1"
-  echo -e "127.0.0.1\tpma.<%= domain %>" >> /etc/hosts
-  echo "# END OF drupal4docker entries" >> /etc/hosts
+  echo "Adding <%= domain %> -> 127.0.0.1 to /private/etc/hosts"
+  echo "Password will be prompted for modifications"
+  echo '127.0.0.1 <%= domain %> mailhog.<%= domain %> pma.<%= domain %> adminer.<%= domain %> varnish.<%= domain %> portainer.<%= domain %> solr.<%= domain %>' | sudo tee -a /private/etc/hosts
   echo
 }
 
@@ -146,6 +142,9 @@ status() {
   echo " Drupal      http://<%= domain %>"
   echo " Mailhog     http://mailhog.<%= domain %>"
   echo " PhpMyAdmin  http://pma.<%= domain %>"
+  echo " Varnish     http://varnish.<%= domain %>"
+  echo " Portainer   http://portainer.<%= domain %>"
+  echo " SOLR        http://solr.<%= domain %>"
   echo
   echo " Status of running containers for <%= siteName %>"
   echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
