@@ -128,12 +128,12 @@ module.exports = class extends Generator {
     {
       name: 'httpPort',
       message: 'http port? Ex: 80, 8081, 8082',
-      default: '80'
+      default: '8082'
     },
     {
       name: 'httpsPort',
       message: 'https port? Ex: 443, 8443, 9443',
-      default: '443'
+      default: '8443'
     },
     {
       type: 'list',
